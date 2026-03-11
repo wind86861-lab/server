@@ -214,7 +214,11 @@ app.get('/seed-data', async (req, res) => {
 // Security Middleware
 app.use(helmet());
 app.use(cors({
-    origin: env.CORS_ORIGIN,
+    origin: [
+        env.CORS_ORIGIN || 'http://localhost:3000',
+        'http://localhost:5173',
+        'https://adorable-creation-production-d1eb.up.railway.app'
+    ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization', 'multipart/form-data'],
 }));
