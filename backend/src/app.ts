@@ -28,6 +28,45 @@ app.get('/health', (req, res) => {
     });
 });
 
+// Emergency admin creation endpoint
+app.post('/create-emergency-admin', async (req, res) => {
+    try {
+        const bcrypt = require('bcrypt');
+        const prisma = require('./config/database').default;
+
+        const existingAdmin = await prisma.user.findFirst({
+            where: { email: 'admin@medicare.uz' }
+        });
+
+        if (existingAdmin) {
+            return res.json({ message: 'Admin already exists', email: 'admin@medicare.uz' });
+        }
+
+        const hashedPassword = await bcrypt.hash('admin123', 10);
+
+        const newAdmin = await prisma.user.create({
+            data: {
+                phone: '+998901234567',
+                email: 'admin@medicare.uz',
+                passwordHash: hashedPassword,
+                firstName: 'Super',
+                lastName: 'Admin',
+                role: 'SUPER_ADMIN',
+            },
+        });
+
+        res.json({
+            message: 'Emergency admin created successfully',
+            email: 'admin@medicare.uz',
+            password: 'admin123',
+            userId: newAdmin.id
+        });
+    } catch (error) {
+        console.error('Emergency admin creation failed:', error);
+        res.status(500).json({ error: 'Failed to create admin' });
+    }
+});
+
 // Security Middleware
 app.use(helmet());
 app.use(cors({
