@@ -28,6 +28,7 @@ app.get('/health', (req, res) => {
     });
 });
 
+
 // Manual migration endpoint
 app.get('/run-migrations', async (req, res) => {
     try {
@@ -208,6 +209,16 @@ app.use('/api/admin/checkup-packages', adminCheckupPackageRoutes);
 app.use('/api/clinic/checkup-packages', clinicCheckupPackageRoutes);
 app.use('/api/clinic', clinicAdminRoutes);
 app.use('/api/admin', adminRoutes);
+
+// API test endpoint for frontend connectivity
+app.get('/api/test', (req, res) => {
+    res.json({
+        success: true,
+        message: 'Backend API is working',
+        timestamp: new Date().toISOString(),
+        backend: 'Banisa Medical Platform'
+    });
+});
 
 // Error Handling
 app.use(errorHandler);
