@@ -1,4 +1,4 @@
-# Force rebuild for seed - v2
+# Clean build - v3 - Final working version
 FROM node:18-bullseye-slim
 
 WORKDIR /app
@@ -21,4 +21,4 @@ ENV PORT=3000
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "npx prisma migrate deploy && (npx ts-node prisma/seed.ts &) && npm start"]
+CMD ["sh", "-c", "npx prisma migrate deploy && timeout 60s npx ts-node prisma/seed.ts && npm start"]
