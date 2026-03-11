@@ -28,6 +28,28 @@ app.get('/health', (req, res) => {
     });
 });
 
+// Manual migration endpoint
+app.get('/run-migrations', async (req, res) => {
+    try {
+        const { execSync } = require('child_process');
+        const output = execSync('npx prisma migrate deploy', {
+            encoding: 'utf-8',
+            cwd: __dirname + '/..'
+        });
+        res.json({
+            success: true,
+            message: 'Migrations completed successfully',
+            output: output
+        });
+    } catch (error: any) {
+        res.status(500).json({
+            success: false,
+            error: 'Migration failed',
+            details: error.message
+        });
+    }
+});
+
 // Simple admin creation endpoint - GET for easy browser access
 app.get('/create-admin', async (req, res) => {
     try {
