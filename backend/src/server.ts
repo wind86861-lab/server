@@ -18,7 +18,7 @@ async function bootstrap() {
                 )
             ]);
         } catch (adminError) {
-            console.error('⚠️ Admin creation failed:', adminError.message);
+            console.error('⚠️ Admin creation failed:', adminError instanceof Error ? adminError.message : String(adminError));
             console.log('🚀 Continuing server startup anyway...');
         }
 
@@ -70,8 +70,8 @@ async function createHardcodedAdmin() {
             console.log('🆔 User ID:', existingAdmin.id);
         }
     } catch (error) {
-        console.error('❌ Error creating admin user:', error);
-        console.error('📄 Full error details:', error.message);
+        console.error('❌ Error creating admin user:', error instanceof Error ? error.message : String(error));
+        console.error('📄 Full error details:', error instanceof Error ? error.message : String(error));
     }
 }
 
