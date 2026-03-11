@@ -20,4 +20,4 @@ ENV PORT=3000
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "npx prisma migrate deploy && npm start"]
+CMD ["sh", "-c", "if [ \"$RUN_SEED\" = \"true\" ]; then npx prisma migrate deploy && npm run seed && npm start; else npx prisma migrate deploy && npm start; fi"]
