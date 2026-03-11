@@ -37,3 +37,6 @@ backend/prisma/migrations/
 # Temporary files
 *.tmp
 .cache/
+
+# Uploaded files (user-submitted documents)
+backend/uploads/
