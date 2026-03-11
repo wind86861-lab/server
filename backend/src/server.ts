@@ -9,8 +9,18 @@ async function bootstrap() {
         await prisma.$connect();
         console.log('Successfully connected to Database');
 
-        // Create hardcoded admin user if not exists
-        await createHardcodedAdmin();
+        // Create hardcoded admin user if not exists (with timeout)
+        try {
+            await Promise.race([
+                createHardcodedAdmin(),
+                new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error('Admin creation timeout')), 30000)
+                )
+            ]);
+        } catch (adminError) {
+            console.error('⚠️ Admin creation failed:', adminError.message);
+            console.log('🚀 Continuing server startup anyway...');
+        }
 
         app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT} in ${env.NODE_ENV} mode`);
