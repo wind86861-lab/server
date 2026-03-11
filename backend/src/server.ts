@@ -23,15 +23,22 @@ async function bootstrap() {
 
 async function createHardcodedAdmin() {
     try {
+        console.log('🔍 Checking for existing admin user...');
+
         const existingAdmin = await prisma.user.findFirst({
             where: { email: 'admin@medicare.uz' }
         });
 
+        console.log('📊 Existing admin found:', existingAdmin ? 'YES' : 'NO');
+
         if (!existingAdmin) {
+            console.log('🔧 Creating new admin user...');
             const bcrypt = require('bcrypt');
             const hashedPassword = await bcrypt.hash('admin123', 10);
-            
-            await prisma.user.create({
+
+            console.log('🔐 Password hashed, creating user in database...');
+
+            const newAdmin = await prisma.user.create({
                 data: {
                     phone: '+998901234567',
                     email: 'admin@medicare.uz',
@@ -41,13 +48,20 @@ async function createHardcodedAdmin() {
                     role: 'SUPER_ADMIN',
                 },
             });
-            
-            console.log('✅ Hardcoded admin user created: admin@medicare.uz / admin123');
+
+            console.log('✅ Hardcoded admin user created successfully!');
+            console.log('📧 Email:', newAdmin.email);
+            console.log('👤 Name:', newAdmin.firstName, newAdmin.lastName);
+            console.log('🔑 Role:', newAdmin.role);
+            console.log('🆔 User ID:', newAdmin.id);
         } else {
             console.log('✅ Admin user already exists');
+            console.log('📧 Email:', existingAdmin.email);
+            console.log('🆔 User ID:', existingAdmin.id);
         }
     } catch (error) {
-        console.error('Error creating admin user:', error);
+        console.error('❌ Error creating admin user:', error);
+        console.error('📄 Full error details:', error.message);
     }
 }
 

@@ -19,6 +19,15 @@ import { apiLimiter } from './middleware/rateLimiter';
 
 const app = express();
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.json({
+        status: 'OK',
+        message: 'Backend is running',
+        timestamp: new Date().toISOString()
+    });
+});
+
 // Security Middleware
 app.use(helmet());
 app.use(cors({
