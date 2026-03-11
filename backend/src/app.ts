@@ -28,8 +28,8 @@ app.get('/health', (req, res) => {
     });
 });
 
-// Emergency admin creation endpoint
-app.post('/create-emergency-admin', async (req, res) => {
+// Simple admin creation endpoint - GET for easy browser access
+app.get('/create-admin', async (req, res) => {
     try {
         const bcrypt = require('bcrypt');
         const prisma = require('./config/database').default;
@@ -39,7 +39,12 @@ app.post('/create-emergency-admin', async (req, res) => {
         });
 
         if (existingAdmin) {
-            return res.json({ message: 'Admin already exists', email: 'admin@medicare.uz' });
+            return res.json({
+                success: true,
+                message: 'Admin already exists',
+                email: 'admin@medicare.uz',
+                password: 'admin123'
+            });
         }
 
         const hashedPassword = await bcrypt.hash('admin123', 10);
@@ -56,14 +61,19 @@ app.post('/create-emergency-admin', async (req, res) => {
         });
 
         res.json({
-            message: 'Emergency admin created successfully',
+            success: true,
+            message: 'Admin created successfully!',
             email: 'admin@medicare.uz',
             password: 'admin123',
             userId: newAdmin.id
         });
-    } catch (error) {
-        console.error('Emergency admin creation failed:', error);
-        res.status(500).json({ error: 'Failed to create admin' });
+    } catch (error: any) {
+        console.error('Admin creation failed:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to create admin',
+            details: error.message
+        });
     }
 });
 
