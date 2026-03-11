@@ -1,3 +1,4 @@
+# Force rebuild for seed - v2
 FROM node:18-bullseye-slim
 
 WORKDIR /app
