@@ -32,7 +32,7 @@ yarn-error.log*
 Thumbs.db
 
 # Prisma
-backend/prisma/migrations/
+# backend/prisma/migrations/ - COMMENTED OUT - migrations need to be tracked
 
 # Temporary files
 *.tmp
