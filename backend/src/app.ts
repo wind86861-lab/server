@@ -19,6 +19,16 @@ import { apiLimiter } from './middleware/rateLimiter';
 
 const app = express();
 
+// Test route - MUST be first, before any middleware
+app.get('/api/test', (req, res) => {
+    res.json({
+        success: true,
+        message: 'Backend API is working',
+        timestamp: new Date().toISOString(),
+        version: '2.0'
+    });
+});
+
 // Health check endpoint
 app.get('/health', (req, res) => {
     res.json({
@@ -192,16 +202,6 @@ app.use('/api/', apiLimiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser()); // required for HttpOnly refresh-token cookie (VULN-03)
-
-// Simple test route - add before all other routes
-app.get('/api/test', (req, res) => {
-    res.json({
-        success: true,
-        message: 'Backend API is working',
-        timestamp: new Date().toISOString(),
-        backend: 'Banisa Medical Platform'
-    });
-});
 
 // Static file serving (uploaded documents, logos, licenses)
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
