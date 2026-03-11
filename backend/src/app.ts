@@ -193,6 +193,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser()); // required for HttpOnly refresh-token cookie (VULN-03)
 
+// Simple test route - add before all other routes
+app.get('/api/test', (req, res) => {
+    res.json({
+        success: true,
+        message: 'Backend API is working',
+        timestamp: new Date().toISOString(),
+        backend: 'Banisa Medical Platform'
+    });
+});
+
 // Static file serving (uploaded documents, logos, licenses)
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
@@ -210,15 +220,6 @@ app.use('/api/clinic/checkup-packages', clinicCheckupPackageRoutes);
 app.use('/api/clinic', clinicAdminRoutes);
 app.use('/api/admin', adminRoutes);
 
-// API test endpoint for frontend connectivity
-app.get('/api/test', (req, res) => {
-    res.json({
-        success: true,
-        message: 'Backend API is working',
-        timestamp: new Date().toISOString(),
-        backend: 'Banisa Medical Platform'
-    });
-});
 
 // Error Handling
 app.use(errorHandler);
