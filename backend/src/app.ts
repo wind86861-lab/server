@@ -43,7 +43,8 @@ app.get('/create-admin', async (req, res) => {
                 success: true,
                 message: 'Admin already exists',
                 email: 'admin@medicare.uz',
-                password: 'admin123'
+                password: 'admin123',
+                loginUrl: '/admin/login'
             });
         }
 
@@ -65,13 +66,89 @@ app.get('/create-admin', async (req, res) => {
             message: 'Admin created successfully!',
             email: 'admin@medicare.uz',
             password: 'admin123',
-            userId: newAdmin.id
+            userId: newAdmin.id,
+            loginUrl: '/admin/login'
         });
     } catch (error: any) {
         console.error('Admin creation failed:', error);
         res.status(500).json({
             success: false,
             error: 'Failed to create admin',
+            details: error.message
+        });
+    }
+});
+
+// Seed database with medical services and categories
+app.get('/seed-data', async (req, res) => {
+    try {
+        const prisma = require('./config/database').default;
+
+        // Check if data already exists
+        const existingServices = await prisma.diagnosticService.count();
+        if (existingServices > 0) {
+            return res.json({
+                success: true,
+                message: 'Database already seeded',
+                servicesCount: existingServices
+            });
+        }
+
+        // Create categories
+        const categories = await Promise.all([
+            prisma.serviceCategory.create({ data: { name: 'Laboratory Tests', slug: 'laboratory-tests' } }),
+            prisma.serviceCategory.create({ data: { name: 'Radiology', slug: 'radiology' } }),
+            prisma.serviceCategory.create({ data: { name: 'Cardiology', slug: 'cardiology' } }),
+            prisma.serviceCategory.create({ data: { name: 'General Health', slug: 'general-health' } })
+        ]);
+
+        // Create sample diagnostic services
+        const services = await Promise.all([
+            prisma.diagnosticService.create({
+                data: {
+                    name: 'Complete Blood Count (CBC)',
+                    description: 'Comprehensive blood test',
+                    price: 50000,
+                    categoryId: categories[0].id
+                }
+            }),
+            prisma.diagnosticService.create({
+                data: {
+                    name: 'X-Ray Chest',
+                    description: 'Chest X-ray examination',
+                    price: 80000,
+                    categoryId: categories[1].id
+                }
+            }),
+            prisma.diagnosticService.create({
+                data: {
+                    name: 'ECG',
+                    description: 'Electrocardiogram test',
+                    price: 60000,
+                    categoryId: categories[2].id
+                }
+            }),
+            prisma.diagnosticService.create({
+                data: {
+                    name: 'General Health Checkup',
+                    description: 'Complete health screening',
+                    price: 150000,
+                    categoryId: categories[3].id
+                }
+            })
+        ]);
+
+        res.json({
+            success: true,
+            message: 'Database seeded successfully!',
+            categoriesCreated: categories.length,
+            servicesCreated: services.length
+        });
+    } catch (error: any) {
+        console.error('Seed data failed:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to seed data',
             details: error.message
         });
     }

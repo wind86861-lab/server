@@ -21,4 +21,4 @@ ENV PORT=3000
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "npx prisma migrate deploy && timeout 60s npx ts-node prisma/seed.ts && npm start"]
+CMD ["sh", "-c", "npx prisma migrate deploy && npm start"]
