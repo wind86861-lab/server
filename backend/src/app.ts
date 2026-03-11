@@ -127,46 +127,70 @@ app.get('/seed-data', async (req, res) => {
             });
         }
 
+        // Get admin user for createdById
+        const adminUser = await prisma.user.findFirst({
+            where: { email: 'admin@medicare.uz' }
+        });
+
+        if (!adminUser) {
+            return res.status(400).json({
+                success: false,
+                error: 'Admin user not found. Please create admin first by visiting /create-admin'
+            });
+        }
+
         // Create categories
         const categories = await Promise.all([
-            prisma.serviceCategory.create({ data: { name: 'Laboratory Tests', slug: 'laboratory-tests' } }),
-            prisma.serviceCategory.create({ data: { name: 'Radiology', slug: 'radiology' } }),
-            prisma.serviceCategory.create({ data: { name: 'Cardiology', slug: 'cardiology' } }),
-            prisma.serviceCategory.create({ data: { name: 'General Health', slug: 'general-health' } })
+            prisma.serviceCategory.create({ data: { nameUz: 'Laboratoriya testlari', nameRu: 'Laboratory Tests', nameEn: 'Laboratory Tests', slug: 'laboratory-tests' } }),
+            prisma.serviceCategory.create({ data: { nameUz: 'Radiologiya', nameRu: 'Radiology', nameEn: 'Radiology', slug: 'radiology' } }),
+            prisma.serviceCategory.create({ data: { nameUz: 'Kardiologiya', nameRu: 'Cardiology', nameEn: 'Cardiology', slug: 'cardiology' } }),
+            prisma.serviceCategory.create({ data: { nameUz: 'Umumiy salomatlik', nameRu: 'General Health', nameEn: 'General Health', slug: 'general-health' } })
         ]);
 
         // Create sample diagnostic services
         const services = await Promise.all([
             prisma.diagnosticService.create({
                 data: {
-                    name: 'Complete Blood Count (CBC)',
-                    description: 'Comprehensive blood test',
-                    price: 50000,
-                    categoryId: categories[0].id
+                    nameUz: 'Umumiy qon tahlili',
+                    nameRu: 'Complete Blood Count (CBC)',
+                    nameEn: 'Complete Blood Count (CBC)',
+                    shortDescription: 'Comprehensive blood test',
+                    priceRecommended: 50000,
+                    categoryId: categories[0].id,
+                    createdById: adminUser.id
                 }
             }),
             prisma.diagnosticService.create({
                 data: {
-                    name: 'X-Ray Chest',
-                    description: 'Chest X-ray examination',
-                    price: 80000,
-                    categoryId: categories[1].id
+                    nameUz: 'Ko\'krak qafasi rentgeni',
+                    nameRu: 'X-Ray Chest',
+                    nameEn: 'X-Ray Chest',
+                    shortDescription: 'Chest X-ray examination',
+                    priceRecommended: 80000,
+                    categoryId: categories[1].id,
+                    createdById: adminUser.id
                 }
             }),
             prisma.diagnosticService.create({
                 data: {
-                    name: 'ECG',
-                    description: 'Electrocardiogram test',
-                    price: 60000,
-                    categoryId: categories[2].id
+                    nameUz: 'Elektrokardiogramma',
+                    nameRu: 'ECG',
+                    nameEn: 'ECG',
+                    shortDescription: 'Electrocardiogram test',
+                    priceRecommended: 60000,
+                    categoryId: categories[2].id,
+                    createdById: adminUser.id
                 }
             }),
             prisma.diagnosticService.create({
                 data: {
-                    name: 'General Health Checkup',
-                    description: 'Complete health screening',
-                    price: 150000,
-                    categoryId: categories[3].id
+                    nameUz: 'Umumiy tibbiy ko\'rik',
+                    nameRu: 'General Health Checkup',
+                    nameEn: 'General Health Checkup',
+                    shortDescription: 'Complete health screening',
+                    priceRecommended: 150000,
+                    categoryId: categories[3].id,
+                    createdById: adminUser.id
                 }
             })
         ]);
